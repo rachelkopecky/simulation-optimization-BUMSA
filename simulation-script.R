@@ -1,6 +1,9 @@
 ## Simulation Project ##
 # Rachel, Derek, Patrick
 
+# Load Libraries #
+library(tidyverse)
+
 # Define suits, cards, values
 suits <- c("Diamonds", "Clubs", "Hearts", "Spades")
 cards <- c("Ace", "Deuce", "Three", "Four","Five", "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King")
@@ -47,20 +50,25 @@ deck <- deck[sample(nrow(deck)),]
 for (i in 1:nrow(deck)) {
         ## Assign Each Player and Dealer First Card
         x1 <- deck[sample(nrow(deck), 1), ]
+        deck <- deck[-as.integer(rownames(x1[1,])),]
         x2 <- deck[sample(nrow(deck), 1), ]
+        deck <- deck[-as.integer(rownames(x2[1,])),]
         x3 <- deck[sample(nrow(deck), 1), ]
+        deck <- deck[-as.integer(rownames(x3[1,])),]
         y <- deck[sample(nrow(deck), 1), ]
+        deck <- deck[-as.integer(rownames(y[1,])),]
         
-        if((nrow(y) < 3) == TRUE){
-                
-                ## Assign Each Player and Dealer Second Card
-                x1 <- rbind(x1, deck[sample(nrow(deck), 1), ])
-                x2 <- rbind(x2, deck[sample(nrow(deck), 1), ])
-                x3 <- rbind(x3, deck[sample(nrow(deck), 1), ])
-                y <- rbind(y, deck[sample(nrow(deck), 1), ])
-        } else {
-                break
-        }
+        ## Assign Each Player and Dealer Second Card
+        x1 <- rbind(x1, deck[sample(nrow(deck), 1), ])
+        deck <- deck[-as.integer(rownames(x1[2,])),]
+        x2 <- rbind(x2, deck[sample(nrow(deck), 1), ])
+        deck <- deck[-as.integer(rownames(x2[2,])),]
+        x3 <- rbind(x3, deck[sample(nrow(deck), 1), ])
+        deck <- deck[-as.integer(rownames(x3[2,])),]
+        y <- rbind(y, deck[sample(nrow(deck), 1), ])
+        deck <- deck[-as.integer(rownames(y[2,])),]
+        
+        break
 }
 
 ## Simluate Hitting or Staying for Round ##
@@ -70,13 +78,17 @@ for (i in 1:nrow(deck)) {
                 ywin <- ywin + 1
                 break
         } else if(sum(x1[,3]) < 16) {
-                x1 <- rbind(x1, deck[sample(nrow(deck), 1), ])    
+                x1 <- rbind(x1, deck[sample(nrow(deck), 1), ])
+                deck <- deck[-as.integer(rownames(x1)),]
         } else if(sum(x2[,3]) < 16){
                 x2 <- rbind(x2, deck[sample(nrow(deck), 1), ])
+                deck <- deck[-as.integer(rownames(x2)),]
         } else if(sum(x3[,3]) < 16){
                 x3 <- rbind(x3, deck[sample(nrow(deck), 1), ])
+                deck <- deck[-as.integer(rownames(x3)),]
         } else if(sum(y[,3]) < 16){
                 y <- rbind(y, deck[sample(nrow(deck), 1), ])
+                deck <- deck[-as.integer(rownames(y)),]
         } else {
                 break
         }
