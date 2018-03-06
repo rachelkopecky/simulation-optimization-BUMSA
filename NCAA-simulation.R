@@ -69,7 +69,7 @@ single_game <- function(teamID_1, teamID_2) {
   team1_wins <- 0
   team2_wins <- 0
   
-  for (j in 1:750) {
+  for (j in 1:1000) {
     
     team1_score <- sample(team1_density$x, 1, prob = team1_density$y)
     team2_score <- sample(team2_density$x, 1, prob = team2_density$y)
@@ -106,7 +106,7 @@ single_game <- function(teamID_1, teamID_2) {
     playin_seeds <- unique(playin_game$SeedNum)
     
     seed_winner <- NULL
-    seed_winner_dat <- NULL
+    playin_winners <- data.frame()
     
     for (seeds in seq_along(playin_seeds)) {
       
@@ -114,10 +114,11 @@ single_game <- function(teamID_1, teamID_2) {
       
       seed_winner[[seeds]] <- single_game(playin_dat$TeamID[1], playin_dat$TeamID[2])
       
-      seed_winner_dat[[seeds]] <- filter(playin_game, TeamID == seed_winner[[seeds]])
+      seed_winner_dat <- filter(playin_game, TeamID == seed_winner[[seeds]])
+      
+      playin_winners <- rbind(playin_winners, seed_winner_dat)
     }
     
-    playin_winners <- data.frame(seed_winner_dat)
     other_dat <- filter(bracket_region_W, PlayIn == "NA")
     
     tournament_dat <- rbind(other_dat, playin_winners)
@@ -181,7 +182,39 @@ single_game <- function(teamID_1, teamID_2) {
     # Final Four
     
     final_four_region_W <- single_game(sweet_sixteen_1v16v8v9v5v12v4v13_winner_W, sweet_sixteen_6v11v3v14v7v10v2v15_winner_W) 
+
     
+# Build out a "bracket"    
+    
+    `Round 1` <- c(game_1_v_16_dat_W$TeamID[1], game_1_v_16_dat_W$TeamID[2], "",
+                   game_8_v_9_dat_W$TeamID[1], game_8_v_9_dat_W$TeamID[2], "",
+                   game_5_v_12_dat_W$TeamID[1], game_5_v_12_dat_W$TeamID[2], "",
+                   game_4_v_13_dat_W$TeamID[1], game_4_v_13_dat_W$TeamID[2], "",
+                   game_6_v_11_dat_W$TeamID[1], game_6_v_11_dat_W$TeamID[2], "",
+                   game_3_v_14_dat_W$TeamID[1], game_3_v_14_dat_W$TeamID[2], "",
+                   game_7_v_10_dat_W$TeamID[1], game_7_v_10_dat_W$TeamID[2], "",
+                   game_2_v_15_dat_W$TeamID[1], game_2_v_15_dat_W$TeamID[2])    
+    
+    `Round 2` <- c(game_1_v_16_winner_W, "", "",
+                   game_8_v_9_winner_W, "", "",
+                   game_5_v_12_winner_W, "", "",
+                   game_4_v_13_winner_W, "", "",
+                   game_6_v_11_winner_W, "", "",
+                   game_3_v_14_winner_W, "", "",
+                   game_7_v_10_winner_W, "", "",
+                   game_2_v_15_winner_W, "")
 
+    `Sweet 16` <- c("",game_1v16_v_8v9_winner_W, "","","","","",
+                   game_4v13_v_5v12_winner_W, "","","","","",
+                   game_3v14_v_6v11_winner_W, "","","","","",
+                   game_2v15_v_7v10_winner_W, "", "", "")
+    
+    `Elite 8` <- c("","","","",sweet_sixteen_1v16v8v9v5v12v4v13_winner_W,
+                   "","","","","","","","","","","",
+                   sweet_sixteen_6v11v3v14v7v10v2v15_winner_W, "","","","","","")
+    
+    `Final 4` <- c("","","","","","","","","","","", final_four_region_W,
+                   "","","","","","","","","","","")
 
-
+    region_W_final_bracket <- r1 <- data.frame(`Round 1`, `Round 2`,`Sweet 16`, `Elite 8`, `Final 4`)
+    
